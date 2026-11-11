@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cours-web
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cours-web
+  template:
+    metadata:
+      labels:
+        app: cours-web
+    spec:
+      containers:
+        - name: web
+          image: cours-web:v1
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 80
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: cours-web
+spec:
+  type: ClusterIP
+  selector:
+    app: cours-web
+  ports:
+    - name: http
+      port: 80
+      targetPort: http
